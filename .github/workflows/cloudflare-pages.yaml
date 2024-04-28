@@ -15,4 +15,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 9839aabb4253ed85d80549a8f99ee832
-          command: pages deploy dist
+          command: pages deploy dist --project-name=dmtblog
