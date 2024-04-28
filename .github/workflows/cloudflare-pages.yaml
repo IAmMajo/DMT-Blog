@@ -1,0 +1,18 @@
+on: push
+name: Cloudflare Pages
+jobs:
+  cloudflare-pages:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4.1.4
+      - uses: actions/setup-node@v4.0.2
+        with:
+          cache: npm
+      - run: |
+          npm ci
+          npx astro build
+      - uses: cloudflare/wrangler-action@v3.4.1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 9839aabb4253ed85d80549a8f99ee832
+          command: pages deploy 
