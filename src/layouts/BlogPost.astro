@@ -9,16 +9,19 @@ import HeaderLink from '../components/HeaderLink.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
 );
+
+const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
 <html lang="de">
 	<head>
 		<BaseHead title={title} description={description} image={heroImage} />
+		<meta name="giscus:backlink" content={canonicalURL}>
 		<style>
 			.row {
 				padding: 3em 1em;
@@ -99,6 +102,7 @@ const posts = (await getCollection('blog')).sort(
 				}
 			}
 		</style>
+		<script src="giscus"></script>
 	</head>
 
 	<body>
@@ -125,6 +129,20 @@ const posts = (await getCollection('blog')).sort(
 							<hr />
 						</div>
 						<slot />
+						<giscus-widget
+							repo="IAmMajo/DMT-Blog"
+							repo-id="R_kgDOL0BXRg"
+							category="Kommentare"
+							category-id="DIC_kwDOL0BXRs4Ce_H6"
+							mapping="title"
+							strict="1"
+							reactions-enabled="1"
+							emit-metadata="0"
+							input-position="bottom"
+							theme="light"
+							lang="de"
+							loading="lazy"
+						></giscus-widget>
 					</div>
 				</article>
 			</main>
