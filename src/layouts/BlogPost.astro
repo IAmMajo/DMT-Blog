@@ -102,7 +102,6 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				}
 			}
 		</style>
-		<script src="giscus"></script>
 	</head>
 
 	<body>
@@ -129,20 +128,23 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 							<hr />
 						</div>
 						<slot />
-						<giscus-widget
-							repo="IAmMajo/DMT-Blog"
-							repo-id="R_kgDOL0BXRg"
-							category="Kommentare"
-							category-id="DIC_kwDOL0BXRs4Ce_H6"
-							mapping="title"
-							strict="1"
-							reactions-enabled="1"
-							emit-metadata="0"
-							input-position="bottom"
-							theme="light"
-							lang="de"
-							loading="lazy"
-						></giscus-widget>
+						<script
+							is:inline
+							src="https://giscus.app/client.js"
+							data-repo="IAmMajo/DMT-Blog"
+							data-repo-id="R_kgDOL0BXRg"
+							data-category="Kommentare"
+							data-category-id="DIC_kwDOL0BXRs4Ce_H6"
+							data-mapping="title"
+							data-strict="1"
+							data-reactions-enabled="1"
+							data-emit-metadata="0"
+							data-input-position="bottom"
+							data-theme="light"
+							data-lang="de"
+							data-loading="lazy"
+							async
+						></script>
 					</div>
 				</article>
 			</main>
