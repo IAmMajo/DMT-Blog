@@ -134,7 +134,7 @@ hr {
 	margin: 0;
 }
 .prose li li {
-	margin: unset;
+	margin: 0;
 }
 iframe {
 	border-radius: 8px;
