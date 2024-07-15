@@ -1,0 +1,281 @@
+---
+title: 'Achte Woche: Verwendungskontexte und FlutterFlow'
+description: 'Lorem ipsum dolor sit amet'
+pubDate: 'Jun 2 2024'
+heroImage: '/blog/eigth-week-contexts-of-use-and-flutterflow/hero.jpg'
+---
+
+## Verwendungskontexte
+
+In der achten Woche gingen wir in der Vorlesung noch einmal einen Schritt zurück
+und sollten uns Verwendungskontexte überlegen - also Situationen, in denen
+unsere Technologien verwendet werden. Anschließend sollten wir zu diesen
+Verwendungskontexten User Stories formulieren und uns überlegen was unsere
+Antwort auf diese sind.
+
+Meiner Gruppe ist dabei neben den beiden Verwendungskontexten „Tablet am Tisch“
+und „Tablet im Raum“ ein neuer Verwendungskontext eingefallen, den wir noch
+nicht berücksichtigt hatten: Eine Gruppe wird von einem Guide durch die
+Ausstellung geleitet. Wie können die Tablets in diesem Fall eingesetzt werden?
+Wir hatten dazu die Idee, dass der Guide mit seinem Tablet kontrollieren kann,
+was auf den Tablets der Gruppe angezeigt wird. So können passend zum Gesagten
+Informationen und Bilder auf den Tablets angezeigt werden. Hier sind Skizzen
+unserer Verwendungskontexte:
+
+![](/blog/eigth-week-contexts-of-use-and-flutterflow/our-contexts-of-use.jpg)
+
+Zu den Verwendungskontexten haben wir folgende User Stories formuliert:
+
+Der Benutzer will...
+
+- ...wissen wofür das Tablet da ist, damit er weiß, was er damit tun kann
+
+- ...wissen welche Funktionen das Tablet hat, damit er diese benutzen kann
+
+- ...weitere Informationen und Kontext zu den im Raum vorhandenen Objekten, um
+  sein Interesse an einem bestimmten Objekt zu befriedigen
+
+- ...die Struktur des Raumes verstehen, um sich im Raum zurechtzufinden
+
+- ...weitere Objekte finden, die es nicht mehr in den Raum geschafft haben, um
+  mehr Informationen zu erhalten
+
+- ...eine zeitliche Übersicht über Beuys, sein Leben, seine Werke und seine
+  Beziehung zum Nationalsozialismus erhalten, um Beuys als Person besser
+  verstehen zu können
+
+- ...unterhalten werden, um sich die Zeit zu vertreiben
+
+- ...Meinungen anderer zu dem Thema sehen und seine eigene Meinung kundtun, um
+  zu reflektieren
+
+- ...dass sich die Tabletansicht automatisch mit der Gruppe aktualisiert, um dem
+  Guide besser folgen zu können
+
+Die meisten dieser User Stories konnten wir bestehenden Funktionen
+beziehungsweise Seiten unseres App-Designs zuordnen. Wir haben aber auch neue
+Skizzen erstellt, um bestimmte User Stories besser zu bedienen. Diese Skizzen
+werden im Folgenden vorgestellt.
+
+### Zeitleiste
+
+Diese Funktionalität ersetzt die bestehende Zeitleisten-Funktionalität und
+entspricht dem, was uns das Museum in der vorherigen Woche bei der Exkursion
+als Beispiel gezeigt hat.
+
+![](/blog/eigth-week-contexts-of-use-and-flutterflow/sketch-of-the-timeline-function.jpg)
+
+### Themen
+
+Diese Funktionalität bietet eine Alternative zu der stöbernden Entdeckung von
+Objekten auf der Home-Seite der App. Die Themen ermöglichen es stattdessen
+geführt durch Informationen zu einem bestimmten Thema geleitet zu werden. Die
+Funktionalität kann als zusätzlicher Menüpunkt in der Navgationsleiste der App
+hinterlegt werden.
+
+![](/blog/eigth-week-contexts-of-use-and-flutterflow/sketch-of-the-topics-function.jpg)
+
+### Ansicht vom Raum
+
+Diese Funktionalität bietet eine alternative Ansicht für die Objekte im Raum,
+um sich besser im Raum zurechtzufinden.
+
+![](/blog/eigth-week-contexts-of-use-and-flutterflow/sketch-of-the-view-of-the-room-function.jpg)
+
+### Guide
+
+Diese Funktionalität ergibt sich aus dem neuen Verwendungskontext, bei dem eine
+Gruppe von einem Guide durch die Ausstellung geleitet wird.
+
+![](/blog/eigth-week-contexts-of-use-and-flutterflow/sketch-of-the-guide-function.jpg)
+
+## FlutterFlow
+
+Zusätzlich hat meine Gruppe in dieser Woche angefangen die Tablet-App mit
+FlutterFlow zu bauen. Dazu haben wir uns wie schon beim Figma-Prototyp gemeinsam
+am Wochenende zusammengesetzt.
+
+Ich habe mich dabei unter anderem um die linke Navigationsleiste der App
+gekümmert. Da FlutterFlow keine eingebaute vertikale Navigationsleiste
+anbietet, habe ich mich dazu entschieden diese über eigenen Code einzubinden,
+da ich so das eingebaute
+[NavigationRail-Widget](https://api.flutter.dev/flutter/material/NavigationRail-class.html)
+von Flutter verwenden konnte:
+
+```dart
+class Navigation extends StatefulWidget {
+  const Navigation({
+    super.key,
+    this.width,
+    this.height,
+    required this.selectedIndex,
+    required this.goHome,
+    required this.goTimeline,
+    required this.goGuestbook,
+    required this.goQrCode,
+    required this.backgroundColor,
+    required this.indicatorColor,
+  });
+
+  final double? width;
+  final double? height;
+  final int selectedIndex;
+  final Future Function() goHome;
+  final Future Function() goTimeline;
+  final Future Function() goGuestbook;
+  final Future Function() goQrCode;
+  final Color backgroundColor;
+  final Color indicatorColor;
+
+  @override
+  State<Navigation> createState() => _NavigationState();
+}
+
+class _NavigationState extends State<Navigation> {
+  @override
+  Widget build(BuildContext context) {
+    return NavigationRail(
+      destinations: const [
+        NavigationRailDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home),
+          label: Text('Home'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.sort_outlined),
+          selectedIcon: Icon(Icons.sort),
+          label: Text('Zeitleiste'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.forum_outlined),
+          selectedIcon: Icon(Icons.forum),
+          label: Text('Gästebuch'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.qr_code_outlined),
+          selectedIcon: Icon(Icons.qr_code),
+          label: Text('QR-Code'),
+        ),
+      ],
+      selectedIndex: widget.selectedIndex,
+      labelType: NavigationRailLabelType.all,
+      groupAlignment: 0,
+      onDestinationSelected: (selectedIndex) {
+        switch (selectedIndex) {
+          case 0:
+            widget.goHome();
+          case 1:
+            widget.goTimeline();
+          case 2:
+            widget.goGuestbook();
+          case 3:
+            widget.goQrCode();
+        }
+      },
+      backgroundColor: widget.backgroundColor,
+      indicatorColor: widget.indicatorColor,
+    );
+  }
+}
+```
+
+Auch um die Top App Bar am oberen Rand der App habe ich mich gekümmert, wobei
+ich die die Sprachauswahl mit eigenem Code eingebunden habe, da FlutterFlow kein
+[SegmentedButton-Widget](https://api.flutter.dev/flutter/material/SegmentedButton-class.html)
+anbietet:
+
+```dart
+import 'dart:convert';
+import 'package:google_fonts/google_fonts.dart';
+
+class LanguageChoice extends StatefulWidget {
+  const LanguageChoice({
+    super.key,
+    this.width,
+    this.height,
+    required this.selected,
+    required this.switchToGerman,
+    required this.switchToEnglish,
+    required this.switchToDutch,
+    required this.selectedBackgroundColor,
+  });
+
+  final double? width;
+  final double? height;
+  final Language selected;
+  final Future Function() switchToGerman;
+  final Future Function() switchToEnglish;
+  final Future Function() switchToDutch;
+  final Color selectedBackgroundColor;
+
+  @override
+  State<LanguageChoice> createState() => _LanguageChoiceState();
+}
+
+class _LanguageChoiceState extends State<LanguageChoice> {
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<Language>(
+      segments: <ButtonSegment<Language>>[
+        ButtonSegment(
+          value: Language.german,
+          label: Text("🇩🇪"),
+        ),
+        ButtonSegment(
+          value: Language.english,
+          label: Text("🇬🇧"),
+        ),
+        ButtonSegment(
+          value: Language.dutch,
+          label: Text("🇳🇱"),
+        ),
+      ],
+      selected: {widget.selected},
+      onSelectionChanged: (selected) {
+        switch (selected.first) {
+          case Language.german:
+            widget.switchToGerman();
+          case Language.english:
+            widget.switchToEnglish();
+          case Language.dutch:
+            widget.switchToDutch();
+        }
+      },
+      style: SegmentedButton.styleFrom(
+        textStyle: GoogleFonts.notoColorEmoji(),
+        selectedBackgroundColor: widget.selectedBackgroundColor,
+      ),
+    );
+  }
+}
+```
+
+Das Language-Enum musste dazu vorher in FlutterFlow angelegt werden:
+
+![](/blog/eigth-week-contexts-of-use-and-flutterflow/the-language-enum-in-flutterflow.jpg)
+
+Zusätzlich benötigten wir an bestimmten Stellen der App eine Funktion, die den
+richtigen Text basierend auf der Sprache zurückgibt. Diese habe ich ebenfalls
+implementiert:
+
+```dart
+String languageText(
+  String engText,
+  String gerText,
+  String nlText,
+  Language language,
+) {
+  /// MODIFY CODE ONLY BELOW THIS LINE
+
+  switch (language) {
+    case Language.german:
+      return gerText;
+    case Language.english:
+      return engText;
+    case Language.dutch:
+      return nlText;
+  }
+
+  /// MODIFY CODE ONLY ABOVE THIS LINE
+}
+```
