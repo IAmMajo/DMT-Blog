@@ -1,0 +1,135 @@
+---
+title: 'Neunte Woche: Gespräch mit dem Museum und FlutterFlow-Fortschritt'
+description: 'Lorem ipsum dolor sit amet'
+pubDate: 'Jun 9 2024'
+heroImage: '/blog/ninth-week-talk-with-the-museum-and-flutterflow-progress/hero.jpg'
+---
+
+## Gespräch mit dem Museum
+
+In der neunten Woche hatten wir in der Vorlesung ein Webex-Meeting mit dem
+Museum, in dem wir noch offene Fragen klären und unsere aktuelle Arbeit
+präsentieren konnten. Aus dem Gespräch ergaben sich folgende Punkte:
+
+- Die neue Zeitleiste, die Themen-Funktion und die Guide-Funktion kamen gut an
+  und sollen umgesetzt werden.
+
+- Die Ansicht-vom-Raum-Funktion wurde erstmal verworfen.
+
+- Zusätzlich zu den Sprachen Deutsch, Englisch und Niederländisch soll die App
+  auch in leichter Sprache verfügbar sein.
+
+- Die Guide-Funktion soll mit NFC-Tags statt als zusätzlicher Punkt im
+  Navigationsmenü umgesetzt werden. Es soll einen NFC-Tag zum Versetzen der
+  Tablets in den Guide-Modus, einen NFC-Tag zum Versetzen der Tablets in den
+  Leiter-Modus und einen NFC-Tag zum Zurückversetzen der Tablets in den normalen
+  Modus geben.
+
+- Die Objekte, die im Ausstellungsraum auf dem Tisch liegen, sollen auch in der
+  App vorkommen und gesondert angezeigt werden (beispielsweise über einen
+  zusätzlichen Tab auf der Home-Seite).
+
+## FlutterFlow-Fortschritt
+
+In dieser Woche arbeitete meine Gruppe auch wieder weiter in FlutterFlow. So
+ergänzten wir Seiten und Funktionen, zu denen wir in der letzten Woche noch
+nicht gekommen waren oder die sich durch das Gespräch mit dem Museum ergeben
+haben. Dazu zählen die Zeitleiste, das Gästebuch und die Guide-Funktion.
+
+Ich ergänzte die neuen Menüpunkte in der Navigationsleiste, die sich durch das
+Gespräch mit dem Museum ergaben:
+
+```dart
+class Navigation extends StatefulWidget {
+  const Navigation({
+    super.key,
+    this.width,
+    this.height,
+    required this.selectedIndex,
+    required this.goObjects,
+    required this.goTimeline,
+    required this.goGuestbook,
+    required this.goQrCode,
+    required this.backgroundColor,
+    required this.indicatorColor,
+    required this.goTopics,
+    required this.goGuide,
+  });
+
+  final double? width;
+  final double? height;
+  final int selectedIndex;
+  final Future Function() goObjects;
+  final Future Function() goTimeline;
+  final Future Function() goGuestbook;
+  final Future Function() goQrCode;
+  final Color backgroundColor;
+  final Color indicatorColor;
+  final Future Function() goTopics;
+  final Future Function() goGuide;
+
+  @override
+  State<Navigation> createState() => _NavigationState();
+}
+
+class _NavigationState extends State<Navigation> {
+  @override
+  Widget build(BuildContext context) {
+    return NavigationRail(
+      destinations: const [
+        NavigationRailDestination(
+          icon: Icon(Icons.photo_library_outlined),
+          selectedIcon: Icon(Icons.photo_library),
+          label: Text('Objekte'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.topic_outlined),
+          selectedIcon: Icon(Icons.topic),
+          label: Text('Themen'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.sort_outlined),
+          selectedIcon: Icon(Icons.sort),
+          label: Text('Zeitleiste'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.forum_outlined),
+          selectedIcon: Icon(Icons.forum),
+          label: Text('Gästebuch'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.qr_code_outlined),
+          selectedIcon: Icon(Icons.qr_code),
+          label: Text('QR-Code'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.co_present_outlined),
+          selectedIcon: Icon(Icons.co_present),
+          label: Text('Guide'),
+        ),
+      ],
+      selectedIndex: widget.selectedIndex,
+      labelType: NavigationRailLabelType.all,
+      groupAlignment: 0,
+      onDestinationSelected: (selectedIndex) {
+        switch (selectedIndex) {
+          case 0:
+            widget.goObjects();
+          case 1:
+            widget.goTopics();
+          case 2:
+            widget.goTimeline();
+          case 3:
+            widget.goGuestbook();
+          case 4:
+            widget.goQrCode();
+          case 5:
+            widget.goGuide();
+        }
+      },
+      backgroundColor: widget.backgroundColor,
+      indicatorColor: widget.indicatorColor,
+    );
+  }
+}
+```

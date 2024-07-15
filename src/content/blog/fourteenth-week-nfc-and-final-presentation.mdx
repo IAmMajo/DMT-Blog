@@ -1,0 +1,67 @@
+---
+title: 'Vierzehnte Woche: NFC und finale Präsentation'
+description: 'Lorem ipsum dolor sit amet'
+pubDate: 'Jul 14 2024'
+heroImage: '/blog/fourteenth-week-nfc-and-final-presentation/hero.jpg'
+---
+
+In der vierzehnten Woche haben alle Gruppen endlich die finale Präsentation für
+das Projekt gehalten.
+
+Am Tag vor der finalen Präsentation habe ich noch die NFC-Funktionalität, die
+Nils in der letzten Woche geschrieben hat, mit echten NFC-Tags ausprobiert, die
+ich bestellt hatte. Dabei fiel mir auf, dass die Funktion `changeToGuidePage`
+noch nicht ganz funktioniert und habe diese abgeändert.
+
+Das war Nils ursprünglicher Code:
+
+```dart
+int changeToGuidePage(BuildContext context, NFCTag? tag) {
+  if (tag == null) {
+    print('No NFC tag scanned.');
+    return 3;
+  }
+
+  String guideTag = "guideTag";
+  String visitorTag = "visitorTag";
+
+  if (tag.id == guideTag) {
+    return 0;
+  } else if (tag.id == visitorTag) {
+    return 1;
+  } else {
+    print("Unknown NFC Tag.");
+    return 3;
+  }
+}
+```
+
+Das simple Auslesen von `tag.id` hat leider nicht funktioniert. Stattdessen
+müssen die sogenannten NDEF-Daten ausgelesen werden. Dazu habe ich die Funktion
+folgendermaßen modifiziert:
+
+```dart
+Future<int> changeToGuidePage(BuildContext context, NFCTag? tag) async {
+  if (tag == null) {
+    print('No NFC tag scanned.');
+    return 3;
+  }
+
+  String guideTag = "guideTag";
+  String visitorTag = "visitorTag";
+
+  bool? ndefAvailable = tag.ndefAvailable;
+  if (ndefAvailable != null && ndefAvailable) {
+    String data =
+        (await FlutterNfcKit.readNDEFRecords()).firstOrNull.toString();
+    if (data.contains(guideTag)) {
+      return 0;
+    }
+    if (data.contains(visitorTag)) {
+      return 1;
+    }
+  }
+  print("Unknown NFC Tag.");
+  return 3;
+}
+```

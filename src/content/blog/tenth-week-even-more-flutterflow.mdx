@@ -1,0 +1,231 @@
+---
+title: 'Zehnte Woche: Noch mehr FlutterFlow'
+description: 'Lorem ipsum dolor sit amet'
+pubDate: 'Jun 16 2024'
+heroImage: '/blog/tenth-week-even-more-flutterflow/hero.jpg'
+---
+
+In der zehnten Woche hat meine Gruppe vor allem einfach nur weiter in
+FlutterFlow gearbeitet. So haben wir beispielsweise die Guide-Funktion
+fertiggestellt (noch ohne NFC-Tags).
+
+Ich habe nochmals die Navigationsleiste mit neuen Icons überarbeitet und dafür
+gesorgt, dass die Labels der Navigationsleiste übersetzt werden können, indem
+diese nicht mehr in der Komponente gehardcoded sind:
+
+```dart
+import 'package:material_symbols_icons/symbols.dart';
+
+class Navigation extends StatefulWidget {
+  const Navigation({
+    super.key,
+    this.width,
+    this.height,
+    required this.selectedIndex,
+    required this.goObjects,
+    required this.goTimeline,
+    required this.goGuestbook,
+    required this.goQrCode,
+    required this.backgroundColor,
+    required this.indicatorColor,
+    required this.goTopics,
+    required this.goGuide,
+    required this.objectsLabel,
+    required this.qrCodeLabel,
+    required this.topicsLabel,
+    required this.timelineLabel,
+    required this.guestbookLabel,
+    required this.guideLabel,
+  });
+
+  final double? width;
+  final double? height;
+  final int selectedIndex;
+  final Future Function() goObjects;
+  final Future Function() goTimeline;
+  final Future Function() goGuestbook;
+  final Future Function() goQrCode;
+  final Color backgroundColor;
+  final Color indicatorColor;
+  final Future Function() goTopics;
+  final Future Function() goGuide;
+  final String objectsLabel;
+  final String qrCodeLabel;
+  final String topicsLabel;
+  final String timelineLabel;
+  final String guestbookLabel;
+  final String guideLabel;
+
+  @override
+  State<Navigation> createState() => _NavigationState();
+}
+
+class _NavigationState extends State<Navigation> {
+  @override
+  Widget build(BuildContext context) {
+    return NavigationRail(
+      destinations: [
+        NavigationRailDestination(
+          icon: const Icon(Symbols.deployed_code),
+          selectedIcon: const Icon(Symbols.deployed_code, fill: 1),
+          label: Text(widget.objectsLabel),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Symbols.qr_code),
+          selectedIcon: const Icon(Symbols.qr_code, fill: 1),
+          label: Text(widget.qrCodeLabel),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Symbols.topic),
+          selectedIcon: const Icon(Symbols.topic, fill: 1),
+          label: Text(widget.topicsLabel),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Symbols.sort),
+          selectedIcon: const Icon(Symbols.sort, fill: 1),
+          label: Text(widget.timelineLabel),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Symbols.forum),
+          selectedIcon: const Icon(Symbols.forum, fill: 1),
+          label: Text(widget.guestbookLabel),
+        ),
+        NavigationRailDestination(
+          icon: const Icon(Symbols.co_present),
+          selectedIcon: const Icon(Symbols.co_present, fill: 1),
+          label: Text(widget.guideLabel),
+        ),
+      ],
+      selectedIndex: widget.selectedIndex,
+      labelType: NavigationRailLabelType.all,
+      groupAlignment: 0,
+      onDestinationSelected: (selectedIndex) {
+        switch (selectedIndex) {
+          case 0:
+            widget.goObjects();
+          case 1:
+            widget.goQrCode();
+          case 2:
+            widget.goTopics();
+          case 3:
+            widget.goTimeline();
+          case 4:
+            widget.goGuestbook();
+          case 5:
+            widget.goGuide();
+        }
+      },
+      backgroundColor: widget.backgroundColor,
+      indicatorColor: widget.indicatorColor,
+    );
+  }
+}
+```
+
+Auch habe ich die leichte Sprache als zusätzliche Sprache zur App hinzugefügt:
+
+```dart
+import 'dart:convert';
+import 'package:google_fonts/google_fonts.dart';
+
+class LanguageChoice extends StatefulWidget {
+  const LanguageChoice({
+    super.key,
+    this.width,
+    this.height,
+    required this.selected,
+    required this.switchToGerman,
+    required this.switchToEnglish,
+    required this.switchToDutch,
+    required this.selectedBackgroundColor,
+    required this.switchToEasyLanguage,
+    required this.easyLanguageColor,
+  });
+
+  final double? width;
+  final double? height;
+  final Language selected;
+  final Future Function() switchToGerman;
+  final Future Function() switchToEnglish;
+  final Future Function() switchToDutch;
+  final Color selectedBackgroundColor;
+  final Future Function() switchToEasyLanguage;
+  final Color easyLanguageColor;
+
+  @override
+  State<LanguageChoice> createState() => _LanguageChoiceState();
+}
+
+class _LanguageChoiceState extends State<LanguageChoice> {
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<Language>(
+      segments: <ButtonSegment<Language>>[
+        ButtonSegment(
+          value: Language.easy_language,
+          label: Icon(
+            const IconData(0xe900, fontFamily: 'CustomIcons'),
+            color: widget.easyLanguageColor,
+          ),
+        ),
+        const ButtonSegment(
+          value: Language.german,
+          label: Text("🇩🇪"),
+        ),
+        const ButtonSegment(
+          value: Language.english,
+          label: Text("🇬🇧"),
+        ),
+        const ButtonSegment(
+          value: Language.dutch,
+          label: Text("🇳🇱"),
+        ),
+      ],
+      selected: {widget.selected},
+      onSelectionChanged: (selected) {
+        switch (selected.first) {
+          case Language.easy_language:
+            widget.switchToEasyLanguage();
+          case Language.german:
+            widget.switchToGerman();
+          case Language.english:
+            widget.switchToEnglish();
+          case Language.dutch:
+            widget.switchToDutch();
+        }
+      },
+      style: SegmentedButton.styleFrom(
+        textStyle: GoogleFonts.notoColorEmoji(),
+        selectedBackgroundColor: widget.selectedBackgroundColor,
+      ),
+    );
+  }
+}
+```
+
+![](/blog/tenth-week-even-more-flutterflow/the-language-enum-in-flutterflow.jpg)
+
+```dart
+String languageText(
+  String engText,
+  String gerText,
+  String nlText,
+  Language language,
+  String easyText,
+) {
+  /// MODIFY CODE ONLY BELOW THIS LINE
+
+  switch (language) {
+    case Language.easy_language:
+      return easyText;
+    case Language.german:
+      return gerText;
+    case Language.english:
+      return engText;
+    case Language.dutch:
+      return nlText;
+  }
+
+  /// MODIFY CODE ONLY ABOVE THIS LINE
+}
+```
